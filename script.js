@@ -32,21 +32,39 @@ console.log(score);
 function takeQuiz() {
 	// start timer
 	// loop until time is up:
-	// - provide question and answer choices
-	$("#content").html("<h3>" + quiz[0].question + "</h3>");
+	// provide question and answer choices
+	$("#content").html("<h2>" + quiz[0].question + "</h2>");
 	for (i = 1; i <= 4; i++) {
 		console.log(i);
 		console.log(quiz[0][i]);
 		var newButton = $("<input/>").attr({
 			type: "button",
-			id: "button" + i,
+			class: "choices",
+			id: i,
 			value: quiz[0][i]
 		});
 		$("#content").append(newButton);
 	}
-	// - get user answer
-	// - correct or wrong?
-	// - update score
+	// get user answer
+	$(".choices").on("click", function() {
+		var userAnswer = parseInt(this.id);
+		console.log(userAnswer);
+		console.log(typeof userAnswer);
+		console.log(typeof quiz[0].correct);
+		// correct or wrong?
+		if (userAnswer === quiz[0].correct) {
+			var isCorrect = "Correct!";
+			console.log(isCorrect);
+			// update score
+			score++;
+			console.log(score);
+		} else {
+			var isCorrect = "Wrong.";
+			console.log(isCorrect);
+			console.log(score);
+		}
+		$("#content").append("<h3>" + isCorrect + "</h3>");
+	});
 	// end quiz
 }
 
