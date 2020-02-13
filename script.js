@@ -3,6 +3,14 @@ $(function() {
 	console.log("ready!");
 });
 
+// start score at zero
+var score = 0;
+console.log("score is: " + score);
+
+// start quiz at first question
+var currentQ = 0;
+console.log("current question is: " + score);
+
 // object array for questions, choices, and answers
 var quiz = [
 	{
@@ -40,40 +48,78 @@ var quiz = [
 ];
 console.log(quiz);
 
-// start score at zero
-var score = 0;
-console.log("score is: " + score);
+// object array for highscores
+var highscores = [
+	{
+		initials: "",
+		score: 0
+	}
+];
 
-// start at first question
-var currentQ = 0;
-console.log("current question is: " + currentQ);
+// take quiz
+$("#start").on("click", function() {
+	// set timer to 60 seconds
+	var time = 60;
+	$("#countdown").html(time);
+	// start timer
+	var quizTime = setInterval(function() {
+		time--;
+		$("#countdown").html(time);
+		if (time === 0) {
+			clearInterval(quizTime);
+			// end quiz if time is up
+			endQuiz();
+		}
+	}, 1000);
 
-// start timer at 60 second
-var time = 60;
-$("#countdown").html(time);
+	// cycle through quiz questions
+	takeQuiz();
+});
+
+// function to take quiz
+function takeQuiz() {
+	// end quiz if all questions have been answered
+	if (quiz[currentQ] === undefined) {
+		endQuiz();
+		return;
+	}
+	// Ask question
+	askQuestion(currentQ);
+	// Get user answer
+	$(".choices").on("click", function() {
+		var userAnswer = parseInt(this.id);
+		console.log("user chose: " + userAnswer);
+		console.log(typeof userAnswer);
+		// Check if correct and update score
+		console.log("correct answer is: " + quiz[currentQ].correct);
+		console.log(typeof quiz[currentQ].correct);
+		checkAnswer(quiz[currentQ].correct, userAnswer);
+		// Go to next question after pause
+		currentQ++;
+		setTimeout(takeQuiz, 500);
+	});
+}
 
 // function to provide question and answer choices
-function askQuestion(i) {
-	// check if all questions answered
-	// if
+function askQuestion(questionNum) {
 	// question
-	$("#content").html("<h2>" + quiz[i].question + "</h2>");
+	$("#content").html("<h2>" + quiz[questionNum].question + "</h2>");
 	// multiple choice answer buttons
 	for (x = 1; x <= 4; x++) {
-		var newButton = $("<input/>").attr({
+		var newBtn = $("<input/>").attr({
 			type: "button",
 			class: "choices",
 			id: x,
-			value: quiz[i][x]
+			value: quiz[questionNum][x]
 		});
-		$("#content").append(newButton);
+		$("#content").append(newBtn);
 	}
 }
 
 // function to check if answer is correct and update score
-function checkAnswer(i, userAnswer) {
+function checkAnswer(correct, user) {
 	// correct or wrong?
-	if (userAnswer === quiz[i].correct) {
+	if (user === correct) {
 		var isCorrect = "Correct!";
 		console.log("user answer is: " + isCorrect);
 		// update score
@@ -87,56 +133,63 @@ function checkAnswer(i, userAnswer) {
 	$("#content").append("<h3>" + isCorrect + "</h3>");
 }
 
-// function to take quiz
-function takeQuiz() {
-	// provide next question
-	if (quiz[currentQ] === undefined) {
-		endQuiz();
-		return;
-	}
-	console.log(quiz[currentQ].question);
-	askQuestion(currentQ);
-	// get user answer
-	$(".choices").on("click", function() {
-		var userAnswer = parseInt(this.id);
-		console.log("user chose: " + userAnswer);
-		//check answer
-		checkAnswer(currentQ, userAnswer);
-		// go to next question
-		currentQ++;
-		setTimeout(takeQuiz, 1000);
-	});
-}
-
-// end quiz
+// at end of quiz
 function endQuiz() {
 	$("#content").html("<h2>Quiz Complete!</h2>");
 	$("#content").append("<h3>Your score is: " + score + "</h3>");
 	$("#timer").html("");
+	// add user to scores list
+	logUser(score);
 }
 
-// quiz to last for specified duration or end after last question answered
-function timedQuiz() {
-	takeQuiz();
-	var quizTime = setInterval(function() {
-		time--;
-		$("#countdown").html(time);
-		if (time === 0) {
-			clearInterval(quizTime);
-			endQuiz();
-		}
-	}, 1000);
+// function to log user and go to scores
+function logUser(points) {
+	var initLabel = $("<input/>").attr({
+		for: "initialsBox",
+		value: "Enter your initials to log your score:"
+	});
+	var initBox = $("<input/>").attr({
+		type: "text",
+		id: "initialsBox",
+		maxlength: 3
+	});
+	var initSubmit = $("<input/>").attr({
+		type: "submit",
+		id: "initialsSubmit"
+	});
+	$("#content").append(initLabel);
+	$("#content").append(initBox);
+	$("#content").append(initSubmit);
+	$("#initialsSubmit").on("click", function() {
+		console.log("user entered: " + $("#initialsBox").val());
+		addUser($("#initialsBox").val(), points);
+		showScores();
+	});
 }
 
-// show score
+// function to add user to high scores array
+// ***does not yet work
+function addUser(id, points) {
+	console.log("user id: " + id);
+	console.log("user points: " + points);
+}
 
-// log user initials
-
-// rank user in list of scores
-
-// show list of highscores
-
-// try again?
-
-// event listener to start quiz
-document.getElementById("start").addEventListener("click", timedQuiz);
+// show high scores
+// ***does not yet work
+function showScores() {
+	$("#content").html("<h2>High Scores:</h2>");
+	$("#content").append("<h3>List of high scores</h3>");
+	var againBtn = $("<input/>").attr({
+		type: "button",
+		id: "again",
+		value: "Try Again"
+	});
+	var clearBtn = $("<input/>").attr({
+		type: "button",
+		id: "clear",
+		value: "Clear High Scores"
+	});
+	$("#content").append(againBtn);
+	$("#content").append(clearBtn);
+	// *** need on click actions
+}

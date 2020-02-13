@@ -36,4 +36,39 @@ The following animation demonstrates the application functionality:
 
 ## Development Notes
 
+- Global variables are used for
+
+### Logic
+
+```
+Intitate
+-> Set score to zero
+-> Start quiz with first question
+-> Array of questions
+-> Array of highscores
+-> Show quiz intro
+EVENT: Click start button
+-> Set timer to allowed time
+-> Start timer
+-> LOOP
+|	-> Ask question
+|	Event: User answers question
+|	-> Get user answer
+|	-> Check if correct
+|	-> Update score
+EVENT: Time runs out or last question is answered
+-> Clear timer
+-> Show final score
+-> Ask user to enter initals to log score
+EVENT: User submits initials
+-> Initials + score get added to highscore array
+-> Show high scores
+-> Try again?
+-> Clear high scores?
+IF EVENT: Click try again
+-> Go back to Initiate
+IF EVENT: Click clear scores
+-> Clear array of highscores
+```
+
 ### Application URL
