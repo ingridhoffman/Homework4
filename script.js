@@ -3,7 +3,7 @@ $(function() {
 	console.log("ready!");
 });
 
-// object for questions, choices, and answers
+// object array for questions, choices, and answers
 var quiz = [
 	{
 		question: "first question",
@@ -42,18 +42,24 @@ console.log(quiz);
 
 // start score at zero
 var score = 0;
-console.log(score);
+console.log("score is: " + score);
 
 // start at first question
 var currentQ = 0;
-console.log(currentQ);
+console.log("current question is: " + currentQ);
 
+// start timer at 60 second
+var time = 60;
+$("#countdown").html(time);
+
+// function to provide question and answer choices
 function askQuestion(i) {
-	// provide question and answer choices
+	// check if all questions answered
+	// if
+	// question
 	$("#content").html("<h2>" + quiz[i].question + "</h2>");
+	// multiple choice answer buttons
 	for (x = 1; x <= 4; x++) {
-		console.log(x);
-		console.log(quiz[i][x]);
 		var newButton = $("<input/>").attr({
 			type: "button",
 			class: "choices",
@@ -64,40 +70,62 @@ function askQuestion(i) {
 	}
 }
 
+// function to check if answer is correct and update score
 function checkAnswer(i, userAnswer) {
 	// correct or wrong?
 	if (userAnswer === quiz[i].correct) {
 		var isCorrect = "Correct!";
-		console.log(isCorrect);
+		console.log("user answer is: " + isCorrect);
 		// update score
 		score++;
-		console.log(score);
+		console.log("score is: " + score);
 	} else {
 		var isCorrect = "Wrong.";
-		console.log(isCorrect);
-		console.log(score);
+		console.log("user answer is: " + isCorrect);
+		console.log("score is: " + score);
 	}
 	$("#content").append("<h3>" + isCorrect + "</h3>");
 }
 
 // function to take quiz
 function takeQuiz() {
-	// start timer
 	// provide next question
+	if (quiz[currentQ] === undefined) {
+		endQuiz();
+		return;
+	}
 	console.log(quiz[currentQ].question);
 	askQuestion(currentQ);
 	// get user answer
 	$(".choices").on("click", function() {
 		var userAnswer = parseInt(this.id);
-		console.log(userAnswer);
+		console.log("user chose: " + userAnswer);
 		//check answer
 		checkAnswer(currentQ, userAnswer);
 		// go to next question
 		currentQ++;
 		setTimeout(takeQuiz, 1000);
 	});
+}
 
-	// end quiz
+// end quiz
+function endQuiz() {
+	$("#content").html("<h2>Quiz Complete!</h2>");
+	$("#content").append("<h3>Your score is: " + score + "</h3>");
+	$("#timer").html("");
+}
+
+// quiz to last for specified duration or end after last question answered
+function timedQuiz() {
+	takeQuiz();
+	var quizTime = setInterval(function() {
+		time--;
+		$("#countdown").html(time);
+		if (time === 0) {
+			clearInterval(quizTime);
+			endQuiz();
+		}
+	}, 1000);
 }
 
 // show score
@@ -111,4 +139,4 @@ function takeQuiz() {
 // try again?
 
 // event listener to start quiz
-document.getElementById("start").addEventListener("click", takeQuiz);
+document.getElementById("start").addEventListener("click", timedQuiz);
