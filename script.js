@@ -7,10 +7,6 @@ $(function() {
 var score = 0;
 console.log("score is: " + score);
 
-// start quiz at first question
-var currentQ = 0;
-console.log("current question is: " + score);
-
 // object array for questions, choices, and answers
 var quiz = [
 	{
@@ -48,16 +44,21 @@ var quiz = [
 ];
 console.log(quiz);
 
-// object array for highscores
-var highscores = [
+// object array for high scores
+var highScores = [
 	{
-		initials: "",
+		initials: "xxx",
 		score: 0
 	}
 ];
 
-// take quiz
+// start quiz when user clicks "Start"
 $("#start").on("click", function() {
+	startQuiz();
+});
+
+// function to start quiz
+function startQuiz() {
 	// set timer to 60 seconds
 	var time = 60;
 	$("#countdown").html(time);
@@ -72,31 +73,31 @@ $("#start").on("click", function() {
 		}
 	}, 1000);
 
-	// cycle through quiz questions
-	takeQuiz();
-});
+	// cycle through quiz questions starting with first
+	takeQuiz(0);
+}
 
 // function to take quiz
-function takeQuiz() {
+function takeQuiz(currentQ) {
 	// end quiz if all questions have been answered
 	if (quiz[currentQ] === undefined) {
 		endQuiz();
 		return;
 	}
-	// Ask question
+	// ask question
 	askQuestion(currentQ);
-	// Get user answer
+	// get user answer
 	$(".choices").on("click", function() {
 		var userAnswer = parseInt(this.id);
 		console.log("user chose: " + userAnswer);
 		console.log(typeof userAnswer);
-		// Check if correct and update score
+		// check if correct and update score
 		console.log("correct answer is: " + quiz[currentQ].correct);
 		console.log(typeof quiz[currentQ].correct);
 		checkAnswer(quiz[currentQ].correct, userAnswer);
-		// Go to next question after pause
+		// go to next question after pause
 		currentQ++;
-		setTimeout(takeQuiz, 500);
+		setTimeout(takeQuiz, 500, currentQ);
 	});
 }
 
@@ -168,22 +169,34 @@ function logUser(points) {
 }
 
 // function to add user to high scores array
-// ***does not yet work
 function addUser(id, points) {
 	console.log("user id: " + id);
 	console.log("user points: " + points);
+	highScores.push({
+		initials: id,
+		score: points
+	});
+	console.log(highScores);
 }
 
 // show high scores
-// ***does not yet work
 function showScores() {
 	$("#content").html("<h2>High Scores:</h2>");
-	$("#content").append("<h3>List of high scores</h3>");
+	$("#content").append("<div id='scoreList'></div>");
+	$.each(highScores, function(key, value) {
+		console.log(value.initials + " | " + value.score);
+		$("#scoreList").append(
+			"<h3>" + value.initials + " : " + value.score + "</h3>"
+		);
+	});
+
+	// try again button
 	var againBtn = $("<input/>").attr({
 		type: "button",
 		id: "again",
 		value: "Try Again"
 	});
+	// clear scores button
 	var clearBtn = $("<input/>").attr({
 		type: "button",
 		id: "clear",
@@ -191,5 +204,16 @@ function showScores() {
 	});
 	$("#content").append(againBtn);
 	$("#content").append(clearBtn);
-	// *** need on click actions
+
+	// if user clicks "Try Again" start the quiz again
+	$("#again").on("click", function() {
+		startQuiz();
+	});
+
+	// if user clicks "Clear High Scores" delete all stored scores
+	$("#clear").on("click", function() {
+		var highScores = [{}];
+		console.log(highScores);
+		$("#scoreList").html("<h3></h3>");
+	});
 }

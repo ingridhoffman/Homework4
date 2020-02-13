@@ -14,3 +14,5 @@
 $.getScript("questions.js");
 
 // store high scores on local?
+
+// try again - why isn't timer coming back?
