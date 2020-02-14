@@ -6,7 +6,7 @@ Web APIs: Code Quiz
 
 As you proceed in your career as a web developer, you will probably be asked to complete a coding assessment, which is typically a combination of multiple-choice questions and interactive challenges. Build a timed code quiz with multiple-choice questions. This app will run in the browser and feature dynamically updated HTML and CSS powered by your JavaScript code. It will also feature a clean and polished user interface and be responsive, ensuring that it adapts to multiple screen sizes.
 
-## User Story
+### User Story
 
 ```
 AS A coding bootcamp student
@@ -14,7 +14,7 @@ I WANT to take a timed quiz on JavaScript fundamentals that stores high scores
 SO THAT I can gauge my progress compared to my peers
 ```
 
-## Acceptance Criteria
+### Acceptance Criteria
 
 ```
 GIVEN I am taking a code quiz
@@ -36,19 +36,16 @@ The following animation demonstrates the application functionality:
 
 ## Development Notes
 
-- Global variables are used for
-
 ### Logic
 
 ```
 Intitate
 -> Set score to zero
--> Start quiz with first question
+-> Set timer to allowed time
 -> Array of questions
 -> Array of highscores
 -> Show quiz intro
 EVENT: Click start button
--> Set timer to allowed time
 -> Start timer
 -> LOOP
 |	-> Ask question
@@ -59,6 +56,7 @@ EVENT: Click start button
 EVENT: Time runs out or last question is answered
 -> Clear timer
 -> Show final score
+
 -> Ask user to enter initals to log score
 EVENT: User submits initials
 -> Initials + score get added to highscore array
@@ -70,5 +68,14 @@ IF EVENT: Click try again
 IF EVENT: Click clear scores
 -> Clear array of highscores
 ```
+
+#### Local Storage
+
+Highscores are kept on local storage until cleared by the user
+
+### Acknowledgements
+
+Quiz questions are selected from:
+https://www.tutorialspoint.com/javascript/javascript_mock_test.htm?min=1&max=25
 
 ### Application URL

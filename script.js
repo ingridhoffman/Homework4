@@ -3,9 +3,14 @@ $(function() {
 	console.log("ready!");
 });
 
-// start score at zero
-var score = 0;
-console.log("score is: " + score);
+// define variable for score
+var score;
+
+// define variable for time allowed
+var time;
+
+// define variable for interval timer
+var quizTime;
 
 // object array for questions, choices, and answers
 var quiz = [
@@ -44,28 +49,38 @@ var quiz = [
 ];
 console.log(quiz);
 
-// object array for high scores
-var highScores = [
-	{
-		initials: "xxx",
-		score: 0
-	}
-];
+// set initial array for for high scores
+var highScores = [];
+console.log("initial highscores" + highScores);
+
+// check local storage for previous scores
+var checkScores = JSON.parse(localStorage.getItem("userScores"));
+console.log("local scores: " + checkScores);
+
+// set stored scores (if any) to high score list
+if (checkScores !== null) {
+	console.log("there are scores");
+	highScores = checkScores;
+}
+console.log("scores list: " + highScores);
 
 // start quiz when user clicks "Start"
-$("#start").on("click", function() {
-	startQuiz();
-});
+$("#start").on("click", startQuiz);
 
 // function to start quiz
 function startQuiz() {
+	// start score at zero
+	score = 0;
+	console.log("score is: " + score);
 	// set timer to 60 seconds
-	var time = 60;
-	$("#countdown").html(time);
+	time = 60;
+	// show timer
+	$("#content").html("<h3 id='timer'>Time remaining: </h3>");
+	$("#timer").append("<span id='countdown'>" + time + "</span>");
 	// start timer
-	var quizTime = setInterval(function() {
+	quizTime = setInterval(function() {
 		time--;
-		$("#countdown").html(time);
+		$("#countdown").html("<span>" + time + "</span>");
 		if (time === 0) {
 			clearInterval(quizTime);
 			// end quiz if time is up
@@ -82,8 +97,12 @@ function takeQuiz(currentQ) {
 	// end quiz if all questions have been answered
 	if (quiz[currentQ] === undefined) {
 		endQuiz();
+		clearInterval(quizTime);
+		console.log(quizTime);
 		return;
 	}
+	// create div for quiz questions
+	$("#content").append("<div id='questions'></div>");
 	// ask question
 	askQuestion(currentQ);
 	// get user answer
@@ -104,7 +123,7 @@ function takeQuiz(currentQ) {
 // function to provide question and answer choices
 function askQuestion(questionNum) {
 	// question
-	$("#content").html("<h2>" + quiz[questionNum].question + "</h2>");
+	$("#questions").html("<h2>" + quiz[questionNum].question + "</h2>");
 	// multiple choice answer buttons
 	for (x = 1; x <= 4; x++) {
 		var newBtn = $("<input/>").attr({
@@ -113,7 +132,7 @@ function askQuestion(questionNum) {
 			id: x,
 			value: quiz[questionNum][x]
 		});
-		$("#content").append(newBtn);
+		$("#questions").append(newBtn);
 	}
 }
 
@@ -130,8 +149,11 @@ function checkAnswer(correct, user) {
 		var isCorrect = "Wrong.";
 		console.log("user answer is: " + isCorrect);
 		console.log("score is: " + score);
+		console.log("current time is: " + time);
+		time = time - 5;
+		console.log("current time is: " + time);
 	}
-	$("#content").append("<h3>" + isCorrect + "</h3>");
+	$("#questions").append("<h3>" + isCorrect + "</h3>");
 }
 
 // at end of quiz
@@ -176,7 +198,13 @@ function addUser(id, points) {
 		initials: id,
 		score: points
 	});
-	console.log(highScores);
+	console.log("high scores: " + highScores);
+	highScores.sort((a, b) => (a.score > b.score ? -1 : 1));
+	console.log("sorted scores: " + highScores);
+	localStorage.setItem("userScores", JSON.stringify(highScores));
+	console.log(
+		"stored scores: " + JSON.parse(localStorage.getItem("userScores"))
+	);
 }
 
 // show high scores
@@ -206,13 +234,12 @@ function showScores() {
 	$("#content").append(clearBtn);
 
 	// if user clicks "Try Again" start the quiz again
-	$("#again").on("click", function() {
-		startQuiz();
-	});
+	$("#again").on("click", startQuiz);
 
 	// if user clicks "Clear High Scores" delete all stored scores
 	$("#clear").on("click", function() {
-		var highScores = [{}];
+		highScores = [];
+		localStorage.removeItem("userScores");
 		console.log(highScores);
 		$("#scoreList").html("<h3></h3>");
 	});
