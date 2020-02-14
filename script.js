@@ -1,7 +1,5 @@
 // jQuery
-$(function() {
-	console.log("ready!");
-});
+$(function() {});
 
 // define variable for score
 var score;
@@ -15,54 +13,70 @@ var quizTime;
 // object array for questions, choices, and answers
 var quiz = [
 	{
-		question: "first question",
-		1: "first answer",
-		2: "second answer",
-		3: "third answer",
-		4: "fourth answer",
+		question: "Which of the following is correct about JavaScript?",
+		1: "JavaScript is a lightweight, interpreted programming language",
+		2: "JavaScript has object-oriented capabilities that allows you to build interactivity into otherwise static HTML pages",
+		3: "The general-purpose core of the language has been embedded in Netscape, Internet Explorer, and other web browsers",
+		4: "All of the above",
 		correct: 4
 	},
 	{
-		question: "second question",
-		1: "23",
-		2: "67",
-		3: "90",
-		4: "56",
+		question:
+			"Which of the following type of variable is visible everywhere in your JavaScript code?",
+		1: "global variable",
+		2: "local variable",
+		3: "Both of the above",
+		4: "None of the above",
+		correct: 1
+	},
+	{
+		question:
+			"Which built-in method combines the text of two strings and returns a new string?",
+		1: "append",
+		2: "concat",
+		3: "attach",
+		4: "None of the above",
 		correct: 2
 	},
 	{
-		question: "third question",
-		1: "12",
-		2: "623",
-		3: "9345",
-		4: "456",
+		question:
+			"Which built-in method adds one or more elements to the end of an array and returns the new length of the array?",
+		1: "last",
+		2: "put",
+		3: "push",
+		4: "None of the above",
 		correct: 3
 	},
 	{
-		question: "fourth question",
-		1: "278",
-		2: "345",
-		3: "78",
-		4: "52",
+		question:
+			"Which built-in method returns the calling string value converted to lower case?",
+		1: "toLowerCase",
+		2: "toLower",
+		3: "changeCase(case)",
+		4: "None of the above",
 		correct: 1
+	},
+	{
+		question:
+			"Which of the following function of Array object extracts a section of an array and returns a new array?",
+		1: "reverse()",
+		2: "shift()",
+		3: "slice()",
+		4: "some()",
+		correct: 3
 	}
 ];
-console.log(quiz);
 
 // set initial array for for high scores
 var highScores = [];
-console.log("initial highscores" + highScores);
 
 // check local storage for previous scores
 var checkScores = JSON.parse(localStorage.getItem("userScores"));
-console.log("local scores: " + checkScores);
 
 // set stored scores (if any) to high score list
 if (checkScores !== null) {
-	console.log("there are scores");
 	highScores = checkScores;
 }
-console.log("scores list: " + highScores);
 
 // start quiz when user clicks "Start"
 $("#start").on("click", startQuiz);
@@ -71,17 +85,18 @@ $("#start").on("click", startQuiz);
 function startQuiz() {
 	// start score at zero
 	score = 0;
-	console.log("score is: " + score);
 	// set timer to 60 seconds
 	time = 60;
 	// show timer
-	$("#content").html("<h3 id='timer'>Time remaining: </h3>");
+	$("#content").html(
+		"<h6 class='text-center text-primary' id='timer'>Time remaining: </h6><hr>"
+	);
 	$("#timer").append("<span id='countdown'>" + time + "</span>");
 	// start timer
 	quizTime = setInterval(function() {
 		time--;
 		$("#countdown").html("<span>" + time + "</span>");
-		if (time === 0) {
+		if (time <= 0) {
 			clearInterval(quizTime);
 			// end quiz if time is up
 			endQuiz();
@@ -98,37 +113,36 @@ function takeQuiz(currentQ) {
 	if (quiz[currentQ] === undefined) {
 		endQuiz();
 		clearInterval(quizTime);
-		console.log(quizTime);
 		return;
 	}
-	// create div for quiz questions
-	$("#content").append("<div id='questions'></div>");
-	// ask question
-	askQuestion(currentQ);
-	// get user answer
-	$(".choices").on("click", function() {
-		var userAnswer = parseInt(this.id);
-		console.log("user chose: " + userAnswer);
-		console.log(typeof userAnswer);
-		// check if correct and update score
-		console.log("correct answer is: " + quiz[currentQ].correct);
-		console.log(typeof quiz[currentQ].correct);
-		checkAnswer(quiz[currentQ].correct, userAnswer);
-		// go to next question after pause
-		currentQ++;
-		setTimeout(takeQuiz, 500, currentQ);
-	});
+	// prevent new question if out of time
+	if (time > 0) {
+		// create div for quiz questions
+		$("#content").append("<div id='questions'></div>");
+		// ask question
+		askQuestion(currentQ);
+		// get user answer
+		$(".choices").on("click", function() {
+			var userAnswer = parseInt(this.id);
+			// check if correct and update score
+			checkAnswer(quiz[currentQ].correct, userAnswer);
+			// go to next question after pause
+			currentQ++;
+			setTimeout(takeQuiz, 500, currentQ);
+		});
+	}
 }
 
 // function to provide question and answer choices
 function askQuestion(questionNum) {
 	// question
-	$("#questions").html("<h2>" + quiz[questionNum].question + "</h2>");
+	$("#questions").html("<h5>" + quiz[questionNum].question + "</h5>");
 	// multiple choice answer buttons
 	for (x = 1; x <= 4; x++) {
 		var newBtn = $("<input/>").attr({
 			type: "button",
-			class: "choices",
+			class: "choices btn btn-light btn-wrap-text my-3 btn-block",
+			style: "white-space: normal",
 			id: x,
 			value: quiz[questionNum][x]
 		});
@@ -141,25 +155,26 @@ function checkAnswer(correct, user) {
 	// correct or wrong?
 	if (user === correct) {
 		var isCorrect = "Correct!";
-		console.log("user answer is: " + isCorrect);
+		$("#questions").append(
+			"<h4 class='text-center text-primary'>" + isCorrect + "</h4>"
+		);
 		// update score
 		score++;
-		console.log("score is: " + score);
 	} else {
 		var isCorrect = "Wrong.";
-		console.log("user answer is: " + isCorrect);
-		console.log("score is: " + score);
-		console.log("current time is: " + time);
-		time = time - 5;
-		console.log("current time is: " + time);
+		$("#questions").append(
+			"<h4 class='text-center text-danger'>" + isCorrect + "</h4>"
+		);
+		time = time - 10;
 	}
-	$("#questions").append("<h3>" + isCorrect + "</h3>");
 }
 
 // at end of quiz
 function endQuiz() {
-	$("#content").html("<h2>Quiz Complete!</h2>");
-	$("#content").append("<h3>Your score is: " + score + "</h3>");
+	$("#content").html("<h2 class='text-center'>Quiz Complete!</h2>");
+	$("#content").append(
+		"<h5 class='text-center text-primary'>Your score is: " + score + "</h5>"
+	);
 	$("#timer").html("");
 	// add user to scores list
 	logUser(score);
@@ -173,18 +188,19 @@ function logUser(points) {
 	});
 	var initBox = $("<input/>").attr({
 		type: "text",
+		class: "form-control",
 		id: "initialsBox",
 		maxlength: 3
 	});
 	var initSubmit = $("<input/>").attr({
 		type: "submit",
+		class: "btn btn-info mt-4",
 		id: "initialsSubmit"
 	});
 	$("#content").append(initLabel);
 	$("#content").append(initBox);
 	$("#content").append(initSubmit);
 	$("#initialsSubmit").on("click", function() {
-		console.log("user entered: " + $("#initialsBox").val());
 		addUser($("#initialsBox").val(), points);
 		showScores();
 	});
@@ -192,41 +208,39 @@ function logUser(points) {
 
 // function to add user to high scores array
 function addUser(id, points) {
-	console.log("user id: " + id);
-	console.log("user points: " + points);
 	highScores.push({
 		initials: id,
 		score: points
 	});
-	console.log("high scores: " + highScores);
 	highScores.sort((a, b) => (a.score > b.score ? -1 : 1));
-	console.log("sorted scores: " + highScores);
 	localStorage.setItem("userScores", JSON.stringify(highScores));
-	console.log(
-		"stored scores: " + JSON.parse(localStorage.getItem("userScores"))
-	);
 }
 
 // show high scores
 function showScores() {
-	$("#content").html("<h2>High Scores:</h2>");
+	$("#content").html("<h3 class='text-center'>High Scores</h3>");
 	$("#content").append("<div id='scoreList'></div>");
 	$.each(highScores, function(key, value) {
-		console.log(value.initials + " | " + value.score);
 		$("#scoreList").append(
-			"<h3>" + value.initials + " : " + value.score + "</h3>"
+			"<h5 class='text-center text-primary'>" +
+				value.initials +
+				"....." +
+				value.score +
+				"</h3>"
 		);
 	});
 
 	// try again button
 	var againBtn = $("<input/>").attr({
 		type: "button",
+		class: "btn btn-info btn-wrap-text mt-3",
 		id: "again",
 		value: "Try Again"
 	});
 	// clear scores button
 	var clearBtn = $("<input/>").attr({
 		type: "button",
+		class: "btn btn-light btn-wrap-text mt-3",
 		id: "clear",
 		value: "Clear High Scores"
 	});
@@ -240,7 +254,6 @@ function showScores() {
 	$("#clear").on("click", function() {
 		highScores = [];
 		localStorage.removeItem("userScores");
-		console.log(highScores);
 		$("#scoreList").html("<h3></h3>");
 	});
 }
