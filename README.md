@@ -1,6 +1,6 @@
-# Homework4
+# JavaScript Quiz
 
-Web APIs: Code Quiz
+Homework4: Web APIs
 
 ## Assignment
 
@@ -80,4 +80,4 @@ https://www.tutorialspoint.com/javascript/javascript_mock_test.htm?min=1&max=25
 
 ### Application URL
 
-https://ingridhoffman.github.io/Homework4/
+https://ingridhoffman.github.io/JavaScriptQuiz/
