@@ -1,8 +1,7 @@
 # JavaScript Quiz
+### Homework4: Web APIs
 
-Homework4: Web APIs
-
-## Assignment
+# Assignment
 
 As you proceed in your career as a web developer, you will probably be asked to complete a coding assessment, which is typically a combination of multiple-choice questions and interactive challenges. Build a timed code quiz with multiple-choice questions. This app will run in the browser and feature dynamically updated HTML and CSS powered by your JavaScript code. It will also feature a clean and polished user interface and be responsive, ensuring that it adapts to multiple screen sizes.
 
@@ -30,13 +29,13 @@ WHEN the game is over
 THEN I can save my initials and score
 ```
 
-The following animation demonstrates the application functionality:
+Demo of expected functionality:
 
 ![code quiz](./Assets/04-web-apis-homework-demo.gif)
 
-## Development Notes
+# Developer Notes
 
-### Logic
+### Logic Framework
 
 ```
 Intitate
